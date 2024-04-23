@@ -5,6 +5,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(('plots.urls', 'plots'), namespace='plots')),
+    path('', include(('plots.urls', 'plots'), namespace='main')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

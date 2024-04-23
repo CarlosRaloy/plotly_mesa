@@ -1,37 +1,68 @@
-import dash
-from dash import dcc, html
-
+from .database import hola
 from django_plotly_dash import DjangoDash
+from dash import dash_table, html
+import dash_bootstrap_components as dbc
+from django.urls import reverse
 
-app = DjangoDash('SimpleExample')   # replaces dash.Dash
 
-app.layout = html.Div([
-    dcc.RadioItems(
-        id='dropdown-color',
-        options=[{'label': c, 'value': c.lower()} for c in ['Red', 'Green', 'Blue']],
-        value='red'
-    ),
-    html.Div(id='output-color'),
-    dcc.RadioItems(
-        id='dropdown-size',
-        options=[{'label': i,
-                  'value': j} for i, j in [('L','large'), ('M','medium'), ('S','small')]],
-        value='medium'
-    ),
-    html.Div(id='output-size')
+def plot1d():
+    app = DjangoDash('SimpleExample', external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.GRID])
 
-])
+    app.layout = html.Div(
+        dbc.Container(
+            [
+                html.H1("Oxirus System Ticket Analysis", className="display-3"),
+                html.P(
+                    "Welcome !!, System is a dedicated platform for managing and resolving support requests, including Corporativo Nova and Raloy Lubricantes.",
+                    className="lead", ),
+                html.P(
+                    "This system aims to facilitate smooth communication and efficient issue resolution without overwhelming the user.",
+                    className="lead", ),
+                html.Hr(className="my-2"),
+                html.P("Click Here , Times for technican"),
+                html.A(dbc.Button("Learn More", color="primary", className="lead"), href=reverse('main:avg')),
+            ],
+            fluid=True,
+            className="py-3",
+        ),
+        className="p-3 bg-body-secondary rounded-3",
+        style={
+            "background": "#e0e0e0",
+            "box-shadow": "-20px -20px 60px #bebebe, 20px 20px 60px #ffffff"
+        }
+    )
 
-@app.callback(
-    dash.dependencies.Output('output-color', 'children'),
-    [dash.dependencies.Input('dropdown-color', 'value')])
-def callback_color(dropdown_value):
-    return "The selected color is %s." % dropdown_value
+    return app
 
-@app.callback(
-    dash.dependencies.Output('output-size', 'children'),
-    [dash.dependencies.Input('dropdown-color', 'value'),
-     dash.dependencies.Input('dropdown-size', 'value')])
-def callback_size(dropdown_color, dropdown_size):
-    return "The chosen T-shirt is a %s %s one." %(dropdown_size,
-                                                  dropdown_color)
+
+def avg_times():
+    app = DjangoDash('avg_time', external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.GRID])
+
+    table = dash_table.DataTable(
+        data=hola.to_dict('records'),
+        columns=[{'name': col, 'id': col} for col in hola.columns],
+        page_size=100,
+        style_table={'overflowX': 'auto'},
+        sort_action="native",  # Ordenamiento nativo en las cabeceras
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold'
+        },
+        style_cell={
+            'textAlign': 'center',
+            'minWidth': '100px', 'width': '100px', 'maxWidth': '100px',
+        }
+    )
+
+    app.layout = html.Div([
+        html.Div(
+            children='Tiempos de respuesta',
+            className="lead text-center font-weight-bold text-primary",
+            style={'padding': '20px'}
+        ),
+        table
+    ])
+
+    return app
+
+

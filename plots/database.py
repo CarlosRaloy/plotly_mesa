@@ -28,7 +28,7 @@ class Credentials_database:
 def get_query(code):
     global my_connection
     try:
-        my_connection = Credentials_database("root", "root", "tickets", "10.150.8.30", "5432").connnect()
+        my_connection = Credentials_database("root", "root", "tickets", "localhost", "5432").connnect()
         cursor = my_connection.cursor()
 
         cursor.execute(code)
@@ -85,3 +85,56 @@ ORDER BY
     AVG(total_seconds) DESC;
 """)
 
+
+improve = get_query("""
+SELECT
+    technician_name,
+    ROUND(
+        LEAST(
+            100,
+            GREATEST(0, 1 - (AVG(total_days) / 30)) * 100
+        ),
+    2) AS eficacia,
+    COUNT(*) AS total_tickets,
+    ROUND(
+        (AVG(total_tickets) * 
+        (LEAST(
+            100,
+            GREATEST(0, 1 - (AVG(total_days) / 30)) * 100))
+        ) / 100,
+    2) AS eficiencia
+FROM
+    (
+        SELECT
+            technician_name,
+            CASE
+                WHEN onhold_time ~ '\d+hrs \d+min' THEN 
+                    CAST(SPLIT_PART(onhold_time, 'hrs ', 1) AS INTEGER) / 24 + 
+                    CAST(SPLIT_PART(SPLIT_PART(onhold_time, 'hrs ', 2), 'min', 1) AS INTEGER) / (24 * 60)
+                ELSE 0
+            END AS total_days,
+            COUNT(*) OVER(PARTITION BY technician_name) AS total_tickets
+        FROM
+            report
+        WHERE
+            onhold_time ~ '\d+hrs \d+min'
+    ) AS subquery
+GROUP BY
+    technician_name
+ORDER BY
+    eficacia DESC;
+""")
+
+
+data = get_query("""select * from report r;""")
+
+
+group_company = get_query("""SELECT 
+    site,
+    COUNT(*) AS total_tickets
+FROM 
+    report
+GROUP BY 
+    site
+ORDER BY 
+    total_tickets DESC;""")

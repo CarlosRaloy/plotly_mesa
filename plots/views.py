@@ -21,3 +21,30 @@ class Plot2DView(TemplateView):
         context = super(Plot2DView, self).get_context_data(**kwargs)
         context['plot2'] = charts.avg_times()
         return context
+
+
+class Plot3DView(TemplateView):
+    template_name = "improve.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Plot3DView, self).get_context_data(**kwargs)
+        context['plot3'] = charts.calculate_improve()
+        return context
+    
+
+class Plot4DView(TemplateView):
+    template_name = "dash.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Plot4DView, self).get_context_data(**kwargs)
+        context['plot5'] = charts.dashboard()
+        return context
+    
+
+class Plot5DView(TemplateView):
+    template_name = "companies.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(Plot5DView, self).get_context_data(**kwargs)
+        context['plot5'] = charts.company()
+        return context

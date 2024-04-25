@@ -1,10 +1,8 @@
 from .database import times_user , improve, data, group_company
 from django_plotly_dash import DjangoDash
-from dash import dash_table, html
-import dash_core_components as dcc
+from dash import dash_table, html, dcc
 import dash_bootstrap_components as dbc
-from django.urls import reverse, reverse_lazy
-from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.templatetags.static import static
 from dash.dependencies import Input, Output
 import plotly.express as px 

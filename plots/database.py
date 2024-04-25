@@ -1,5 +1,9 @@
 import psycopg2
 import pandas as pd
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 class Credentials_database:
     def __init__(self, user, password, database, host, port):
         self.__user = user
@@ -28,7 +32,7 @@ class Credentials_database:
 def get_query(code):
     global my_connection
     try:
-        my_connection = Credentials_database("root", "root", "tickets", "localhost", "5432").connnect()
+        my_connection = Credentials_database(os.getenv('USER_DB') ,os.getenv('PASSWORD_DB') ,os.getenv('DATABASE_DB') ,os.getenv('HOST_DB') ,os.getenv('PORT_DB')).connnect()
         cursor = my_connection.cursor()
 
         cursor.execute(code)

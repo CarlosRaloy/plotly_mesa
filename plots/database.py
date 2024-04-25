@@ -55,7 +55,7 @@ def get_query(code):
         my_connection.close()
 
 
-hola = get_query("""SELECT 
+times_user = get_query("""SELECT 
     technician_name as tecnico,
     CONCAT(
         TO_CHAR(AVG(total_seconds) / (24 * 3600), 'FM999999990D'), ' días ',
@@ -84,3 +84,4 @@ GROUP BY
 ORDER BY 
     AVG(total_seconds) DESC;
 """)
+
